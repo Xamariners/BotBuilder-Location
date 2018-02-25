@@ -18,10 +18,12 @@
         private readonly static string ImageUrlByBBox = $"https://dev.virtualearth.net/REST/V1/Imagery/Map/Road?form={FormCode}&mapArea={{0}},{{1}},{{2}},{{3}}&mapSize=500,280&pp={{4}},{{5}};1;{{6}}&dpi=1&logo=always";
 
         private readonly string apiKey;
+        private readonly string countryCode;
 
-        internal BingGeoSpatialService(string apiKey)
+        internal BingGeoSpatialService(string apiKey, string countryCode = null)
         {
             SetField.NotNull(out this.apiKey, nameof(apiKey), apiKey);
+            this.countryCode = countryCode;
         }
 
         public async Task<LocationSet> GetLocationsByQueryAsync(string address)
@@ -31,13 +33,22 @@
                 throw new ArgumentNullException(nameof(address));
             }
 
-            return await this.GetLocationsAsync(FindByQueryApiUrl + Uri.EscapeDataString(address) + "&key=" + this.apiKey);
+            return await this.GetLocationsAsync(FindByQueryApiUrl + Uri.EscapeDataString(address) + "&key=" + this.apiKey + AddCountryCode());
+        }
+
+        private string AddCountryCode()
+        {
+            if (string.IsNullOrWhiteSpace(countryCode))
+            {
+                return string.Empty;
+            }
+            return "userRegion=" + this.countryCode;
         }
 
         public async Task<LocationSet> GetLocationsByPointAsync(double latitude, double longitude)
         {
             return await this.GetLocationsAsync(
-                string.Format(CultureInfo.InvariantCulture, FindByPointUrl, latitude, longitude) + "&key=" + this.apiKey);
+                string.Format(CultureInfo.InvariantCulture, FindByPointUrl, latitude, longitude) + "&key=" + this.apiKey + AddCountryCode());
         }
 
         public string GetLocationMapImageUrl(Location location, int? index = null)
@@ -64,7 +75,7 @@
                     location.BoundaryBox[3],
                     point.Coordinates[0],
                     point.Coordinates[1], index)
-                    + "&key=" + this.apiKey;
+                    + "&key=" + this.apiKey + AddCountryCode();
             }
             else
             {
@@ -73,7 +84,7 @@
                     ImageUrlByPoint, 
                     point.Coordinates[0], 
                     point.Coordinates[1], 
-                    index) + "&key=" + apiKey;
+                    index) + "&key=" + apiKey + AddCountryCode();
             }
         }
 
