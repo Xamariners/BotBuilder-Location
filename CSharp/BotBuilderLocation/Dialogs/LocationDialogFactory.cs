@@ -9,6 +9,7 @@
     internal class LocationDialogFactory : ILocationDialogFactory
     {
         private readonly string apiKey;
+        private readonly string countryCode;
         private readonly string channelId;
         private readonly string prompt;
         private readonly LocationOptions options;
@@ -18,6 +19,7 @@
 
         internal LocationDialogFactory(
             string apiKey,
+            string countryCode,
             string channelId,
             string prompt,
             IGeoSpatialService geoSpatialService,
@@ -28,13 +30,14 @@
             SetField.NotNull(out this.apiKey, nameof(apiKey), apiKey);
             SetField.NotNull(out this.channelId, nameof(channelId), channelId);
             SetField.NotNull(out this.prompt, nameof(prompt), prompt);
+            SetField.NotNull(out this.countryCode, nameof(countryCode), countryCode);
             this.geoSpatialService = geoSpatialService;
             this.options = options;
             this.requiredFields = requiredFields;
             this.resourceManager = resourceManager ?? new LocationResourceManager();
         }
 
-       public IDialog<LocationDialogResponse> CreateDialog(BranchType branch, Location location = null, string locationName = null, bool skipDialogPrompt = false)
+        public IDialog<LocationDialogResponse> CreateDialog(BranchType branch, Location location = null, string locationName = null, bool skipDialogPrompt = false)
         {
             bool isFacebookChannel = StringComparer.OrdinalIgnoreCase.Equals(this.channelId, "facebook");
 
@@ -53,8 +56,8 @@
                 return new RichLocationRetrieverDialog(
                     prompt: this.prompt,
                     supportsKeyboard: isFacebookChannel,
-                    cardBuilder: new LocationCardBuilder(this.apiKey, this.resourceManager),
-                    geoSpatialService: new BingGeoSpatialService(this.apiKey),
+                    cardBuilder: new LocationCardBuilder(this.apiKey, this.resourceManager, this.countryCode),
+                    geoSpatialService: new BingGeoSpatialService(this.apiKey, this.countryCode),
                     options: this.options,
                     requiredFields: this.requiredFields,
                     resourceManager: this.resourceManager,
@@ -66,8 +69,8 @@
                     isFacebookChannel,
                     new FavoritesManager(),
                     this,
-                    new LocationCardBuilder(this.apiKey, this.resourceManager),
-                    new BingGeoSpatialService(this.apiKey),
+                    new LocationCardBuilder(this.apiKey, this.resourceManager, this.countryCode),
+                    new BingGeoSpatialService(this.apiKey, this.countryCode),
                     this.options,
                     this.requiredFields,
                     this.resourceManager);

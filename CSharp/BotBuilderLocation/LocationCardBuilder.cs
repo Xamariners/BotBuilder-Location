@@ -1,4 +1,6 @@
-﻿namespace Microsoft.Bot.Builder.Location
+﻿using System.Runtime.CompilerServices;
+
+namespace Microsoft.Bot.Builder.Location
 {
     using System;
     using System.Collections.Generic;
@@ -16,14 +18,17 @@
     public class LocationCardBuilder : ILocationCardBuilder
     {
         private readonly string apiKey;
+        private readonly string countryCode;
         private readonly LocationResourceManager resourceManager;
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="LocationCardBuilder"/> class.
         /// </summary>
         /// <param name="apiKey">The geo spatial API key.</param>
-        public LocationCardBuilder(string apiKey, LocationResourceManager resourceManager)
+        public LocationCardBuilder(string apiKey, LocationResourceManager resourceManager, string countryCode)
         {
             SetField.NotNull(out this.apiKey, nameof(apiKey), apiKey);
+            SetField.NotNull(out this.countryCode, nameof(countryCode), countryCode);
             SetField.NotNull(out this.resourceManager, nameof(resourceManager), resourceManager);
         }
 
@@ -55,7 +60,7 @@
                 {
                     var image =
                         new CardImage(
-                            url: new BingGeoSpatialService(this.apiKey).GetLocationMapImageUrl(location, i));
+                            url: new BingGeoSpatialService(this.apiKey, this.countryCode).GetLocationMapImageUrl(location, i));
 
                     heroCard.Images = new[] { image };
                 }

@@ -129,8 +129,9 @@
             string prompt,
             LocationOptions options = LocationOptions.None,
             LocationRequiredFields requiredFields = LocationRequiredFields.None,
-            LocationResourceManager resourceManager = null)
-            : this(new LocationDialogFactory(apiKey, channelId, prompt, new BingGeoSpatialService(apiKey), options, requiredFields, resourceManager), new FavoritesManager(), resourceManager)
+            LocationResourceManager resourceManager = null,
+            string countryCode = null)
+            : this(new LocationDialogFactory(apiKey, countryCode ?? "", channelId, prompt, new BingGeoSpatialService(apiKey, countryCode ?? ""), options, requiredFields, resourceManager), new FavoritesManager(), resourceManager)
         {
             this.options = options;
         }

@@ -20,10 +20,10 @@
         private readonly string apiKey;
         private readonly string countryCode;
 
-        internal BingGeoSpatialService(string apiKey, string countryCode = null)
+        internal BingGeoSpatialService(string apiKey, string countryCode)
         {
             SetField.NotNull(out this.apiKey, nameof(apiKey), apiKey);
-            this.countryCode = countryCode;
+            SetField.NotNull(out this.countryCode, nameof(countryCode), countryCode);
         }
 
         public async Task<LocationSet> GetLocationsByQueryAsync(string address)
