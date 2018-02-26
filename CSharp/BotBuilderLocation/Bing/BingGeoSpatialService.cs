@@ -33,7 +33,7 @@
                 throw new ArgumentNullException(nameof(address));
             }
 
-            return await this.GetLocationsAsync(FindByQueryApiUrl + Uri.EscapeDataString(address) + "&key=" + this.apiKey + AddCountryCode());
+            return await this.GetLocationsAsync(FindByQueryApiUrl + Uri.EscapeDataString(address) + AddCountryCode() + "&key=" + this.apiKey );
         }
 
         private string AddCountryCode()
@@ -42,13 +42,13 @@
             {
                 return string.Empty;
             }
-            return "&userRegion=" + this.countryCode;
+            return ", " + this.countryCode;
         }
 
         public async Task<LocationSet> GetLocationsByPointAsync(double latitude, double longitude)
         {
             return await this.GetLocationsAsync(
-                string.Format(CultureInfo.InvariantCulture, FindByPointUrl, latitude, longitude) + "&key=" + this.apiKey + AddCountryCode());
+                string.Format(CultureInfo.InvariantCulture, FindByPointUrl, latitude, longitude) + "&key=" + this.apiKey);
         }
 
         public string GetLocationMapImageUrl(Location location, int? index = null)
@@ -75,7 +75,7 @@
                     location.BoundaryBox[3],
                     point.Coordinates[0],
                     point.Coordinates[1], index)
-                    + "&key=" + this.apiKey + AddCountryCode();
+                    + "&key=" + this.apiKey;
             }
             else
             {
@@ -84,7 +84,7 @@
                     ImageUrlByPoint, 
                     point.Coordinates[0], 
                     point.Coordinates[1], 
-                    index) + "&key=" + apiKey + AddCountryCode();
+                    index) + "&key=" + apiKey;
             }
         }
 
