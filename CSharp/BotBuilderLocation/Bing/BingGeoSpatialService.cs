@@ -42,7 +42,7 @@
             {
                 return string.Empty;
             }
-            return "userRegion=" + this.countryCode;
+            return "&userRegion=" + this.countryCode;
         }
 
         public async Task<LocationSet> GetLocationsByPointAsync(double latitude, double longitude)
